@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Lexer {
 
-	StateMachine sm = new StateMachine();
+	StateMachine sm = StateMachine.NON_PHP;
 	private static String operators = "'\"{}()[]=+-%!*.:<>;&|,";
 
 	public void compress(List<String> lines) {
@@ -24,51 +24,72 @@ public class Lexer {
 		StringBuilder line = new StringBuilder(lineToCompress);
 		String ret = "";
 		for (int i = 0; i < line.length(); i++) {
-			if (!sm.isInComment() && isWhiteSpace(line.charAt(i))) {
-				if (ret.isEmpty()) {
-					continue;
-				} else if (isAlphaNum(ret.charAt(ret.length() - 1))) {
-					if (line.length() > i) {
-						if (isAlphaNum(line.charAt(i + 1))) {
-							ret += line.charAt(i);
+			switch (sm) {
+				case NON_PHP:
+					if (line.length() > i + 4) {
+						if (line.subSequence(i, i + 5).equals("<?php")) {
+							sm = StateMachine.CODE;
+							i += 4;
+							continue;
 						}
 					}
-				} else if (!isOperator(ret.charAt(ret.length() - 1))) {
-					ret += line.charAt(i);
-				}
-				continue;
-			} else if (sm.isInComment() | (line.charAt(i) == '/' && line.length() > i + 1)) {
-				if (!sm.isInComment() && line.charAt(i + 1) == '/') {
+					ret+=line.charAt(i);
 					break;
-				} else if (sm.isInComment() | line.charAt(i + 1) == '*') {
-					sm.setInComment(true);
-					do {
-						if (line.length() > i + 1) {
-							i++;
-						} else {
-							break;
-						}
-					} while (!(line.charAt(i) == '*' && line.charAt(i + 1) == '/'));
-					sm.setInComment(false);
-					if (line.length() > i + 1) {
-						line.setCharAt(i + 1, ' ');
-					}
-					continue;
-				}
-			} else if (line.charAt(i) == '"') {
-				sm.setInLiteral(true);
-				do {
-					if (line.length() > i + 1) {
-						ret += line.charAt(i);
-						i++;
-					} else {
+				case CODE:
+					if (line.length() > i + 1 && line.charAt(i) == '/' && line.charAt(i + 1) == '/') {
+						i=line.length();
 						break;
 					}
-				} while (line.charAt(i) != '"');
-				sm.setInLiteral(false);
+					if (isWhiteSpace(line.charAt(i))) {
+						if (ret.isEmpty()) {
+							continue;
+						} else if (isAlphaNum(ret.charAt(ret.length() - 1))) {
+							if (line.length() > i) {
+								if (isAlphaNum(line.charAt(i + 1))) {
+									ret += line.charAt(i);
+								}
+							}
+						} else if (!isOperator(ret.charAt(ret.length() - 1))) {
+							ret += line.charAt(i);
+						}
+						continue;
+					} else if (line.charAt(i) == '"') {
+						do {
+							if (line.length() > i + 1) {
+								ret += line.charAt(i);
+								i++;
+							} else {
+								break;
+							}
+						} while (line.charAt(i) != '"');
+					} else if (line.charAt(i) == '/' && line.length() > i + 1) {
+						if (line.charAt(i + 1) == '*') {
+							sm = StateMachine.IN_COMMENT;
+							i++;
+							break;
+						}
+					}
+					ret += line.charAt(i);
+					break;
+				case IN_COMMENT:
+					boolean commentEnded = false;
+					do {
+						if (line.length() > i + 1) {
+							if (line.charAt(i) == '*' && line.charAt(i + 1) == '/') {
+								commentEnded = true;
+							}
+							i += 2;
+						} else {
+							continue;//not good
+						}
+					} while (!commentEnded);
+					if (line.length() > i) {
+						line.setCharAt(i, ' ');
+					}
+					break;
+					
 			}
-			ret += line.charAt(i);
-		}//endof for
+		}
 		return ret;
 	}
 
