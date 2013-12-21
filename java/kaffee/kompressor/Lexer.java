@@ -33,11 +33,11 @@ public class Lexer {
 							continue;
 						}
 					}
-					ret+=line.charAt(i);
+					ret += line.charAt(i);
 					break;
 				case CODE:
 					if (line.length() > i + 1 && line.charAt(i) == '/' && line.charAt(i + 1) == '/') {
-						i=line.length();
+						i = line.length();
 						break;
 					}
 					if (isWhiteSpace(line.charAt(i))) {
@@ -54,14 +54,9 @@ public class Lexer {
 						}
 						continue;
 					} else if (line.charAt(i) == '"') {
-						do {
-							if (line.length() > i + 1) {
-								ret += line.charAt(i);
-								i++;
-							} else {
-								break;
-							}
-						} while (line.charAt(i) != '"');
+						sm = StateMachine.INTERPRETED_LITERAL;
+					} else if (line.charAt(i) == '\'') {
+						sm = StateMachine.LITERAL;
 					} else if (line.charAt(i) == '/' && line.length() > i + 1) {
 						if (line.charAt(i + 1) == '*') {
 							sm = StateMachine.IN_COMMENT;
@@ -77,17 +72,41 @@ public class Lexer {
 						if (line.length() > i + 1) {
 							if (line.charAt(i) == '*' && line.charAt(i + 1) == '/') {
 								commentEnded = true;
+								sm = StateMachine.CODE;
 							}
-							i += 2;
+							i += 1;
 						} else {
-							continue;//not good
+							break;
 						}
 					} while (!commentEnded);
 					if (line.length() > i) {
 						line.setCharAt(i, ' ');
 					}
 					break;
-					
+				case INTERPRETED_LITERAL:
+					do {
+						ret += line.charAt(i);
+						if (line.charAt(i) == '"') {
+							if (i == 0 || line.charAt(i - 1) != '\\') {
+								sm = StateMachine.CODE;
+								break;
+							}
+						}
+						i++;
+					} while (line.length() > i);
+					break;
+				case LITERAL:
+					do {
+						ret += line.charAt(i);
+						if (line.charAt(i) == '\'') {
+							if (i == 0 || line.charAt(i - 1) != '\\') {
+								sm = StateMachine.CODE;
+								break;
+							}
+						}
+						i++;
+					} while (line.length() > i);
+					break;
 			}
 		}
 		return ret;
