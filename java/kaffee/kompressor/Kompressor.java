@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * .
  * @author vszakonyi
  */
 public class Kompressor {
@@ -19,11 +19,13 @@ public class Kompressor {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) throws FileNotFoundException, IOException {
+		Display.about();
+		ProgramOptions options = ArgParser.parseOptions(args);
 		Lexer l = new Lexer();
 		List<String> output = new LinkedList<String>();
-		File file = new File("fibonacci.php");
-		BufferedReader reader = null;
-		reader = new BufferedReader(new FileReader(file));
+		File file = new File(options.getBaseDir() + "fibonacci.php");
+
+		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = null;
 		while ((line = reader.readLine()) != null) {
 			String s = l.compressLine(line);
@@ -31,15 +33,5 @@ public class Kompressor {
 
 		}
 		int i = 1;
-		
-		/*
-		 * if (sm.isInComment()) {
-				
-				}
-			} else {
-				
-			}
-		 * 
-		 */
 	}
 }
