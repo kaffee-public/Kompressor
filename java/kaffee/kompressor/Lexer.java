@@ -3,7 +3,7 @@ package kaffee.kompressor;
 import java.util.List;
 
 /**
- *
+ * .
  * @author vszakonyi
  */
 public class Lexer {
@@ -26,12 +26,10 @@ public class Lexer {
 		for (int i = 0; i < line.length(); i++) {
 			switch (sm) {
 				case NON_PHP:
-					if (line.length() > i + 4) {
-						if (line.subSequence(i, i + 5).equals("<?php")) {
-							sm = StateMachine.CODE;
-							i += 4;
-							continue;
-						}
+					if (line.length() > i + 4 && line.subSequence(i, i + 5).equals("<?php")) {
+						sm = StateMachine.CODE;
+						i += 4;
+						continue;
 					}
 					ret += line.charAt(i);
 					break;
@@ -117,9 +115,6 @@ public class Lexer {
 	}
 
 	private boolean isWhiteSpace(char c) {
-		if (c == ' ' || c == '\t') {
-			return true;
-		}
-		return false;
+		return c == ' ' || c == '\t';
 	}
 }
