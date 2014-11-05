@@ -8,7 +8,7 @@ public class ArgParser {
 
 	private static final String QUIET = "q";
 	private static final String VERBOSE = "v";
-	private static final String ABREVATION = "abr";
+	private static final String ABBREVATION = "abr";
 	private static final String BASEDIR = "basedir";
 
 	public static ProgramOptions parseOptions(String[] params) {
@@ -21,7 +21,7 @@ public class ArgParser {
 				if (VERBOSE.equals(params[i])) {
 					po.setVerbose(true);
 				}
-				if (ABREVATION.equals(params[i])) {
+				if (ABBREVATION.equals(params[i])) {
 					po.setAbrevate(true);
 				}
 				if (BASEDIR.equals(params[i]) && i + 1 != params.length) {
