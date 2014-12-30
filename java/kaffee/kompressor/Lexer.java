@@ -9,7 +9,7 @@ import java.util.List;
 public class Lexer {
 
 	StateMachine sm = StateMachine.NON_PHP;
-	private static String operators = "'\"{}()[]=+-%!*.:<>;&|,";
+	private static final String operators = "'\"{}()[]=+-%!*.:<>;&|,";
 
 	public void compress(List<String> lines) {
 		for (String line : lines) {
@@ -22,7 +22,7 @@ public class Lexer {
 
 	String compressLine(final String lineToCompress) {
 		StringBuilder line = new StringBuilder(lineToCompress);
-		String ret = "";
+		StringBuilder ret = new StringBuilder();
 		for (int i = 0; i < line.length(); i++) {
 			switch (sm) {
 				case NON_PHP:
@@ -31,7 +31,7 @@ public class Lexer {
 						i += 4;
 						continue;
 					}
-					ret += line.charAt(i);
+					ret.append(line.charAt(i));
 					break;
 				case CODE:
 					if (line.length() > i + 1 && line.charAt(i) == '/' && line.charAt(i + 1) == '/') {
@@ -39,16 +39,16 @@ public class Lexer {
 						break;
 					}
 					if (isWhiteSpace(line.charAt(i))) {
-						if (ret.isEmpty()) {
+						if (ret.length() == 0) {
 							continue;
 						} else if (isAlphaNum(ret.charAt(ret.length() - 1))) {
 							if (line.length() > i) {
 								if (isAlphaNum(line.charAt(i + 1))) {
-									ret += line.charAt(i);
+									ret.append(line.charAt(i));
 								}
 							}
 						} else if (!isOperator(ret.charAt(ret.length() - 1))) {
-							ret += line.charAt(i);
+							ret.append(line.charAt(i));
 						}
 						continue;
 					} else if (line.charAt(i) == '"') {
@@ -62,7 +62,7 @@ public class Lexer {
 							break;
 						}
 					}
-					ret += line.charAt(i);
+					ret.append(line.charAt(i));
 					break;
 				case IN_COMMENT:
 					boolean commentEnded = false;
@@ -83,7 +83,7 @@ public class Lexer {
 					break;
 				case INTERPRETED_LITERAL:
 					do {
-						ret += line.charAt(i);
+						ret.append(line.charAt(i));
 						if (line.charAt(i) == '"') {
 							if (i == 0 || line.charAt(i - 1) != '\\') {
 								sm = StateMachine.CODE;
@@ -95,7 +95,7 @@ public class Lexer {
 					break;
 				case LITERAL:
 					do {
-						ret += line.charAt(i);
+						ret.append(line.charAt(i));
 						if (line.charAt(i) == '\'') {
 							if (i == 0 || line.charAt(i - 1) != '\\') {
 								sm = StateMachine.CODE;
@@ -107,11 +107,11 @@ public class Lexer {
 					break;
 			}
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	private boolean isAlphaNum(char c) {
-		return Character.isAlphabetic(c) | Character.isDigit(c) | c == '$';
+		return Character.isAlphabetic(c) || Character.isDigit(c) || c == '$';
 	}
 
 	private boolean isWhiteSpace(char c) {
