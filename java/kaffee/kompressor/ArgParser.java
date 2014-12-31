@@ -4,12 +4,13 @@ package kaffee.kompressor;
  * .
  * @author ahorvath
  */
-public class ArgParser {
+class ArgParser {
 
-	private static final String QUIET = "q";
-	private static final String VERBOSE = "v";
-	private static final String ABBREVATION = "abr";
-	private static final String BASEDIR = "basedir";
+	private static final String QUIET = "-q";
+	private static final String VERBOSE = "-v";
+	private static final String ABBREVATION = "-abr";
+	private static final String OUTPUT = "-o";
+	private static final String RECURSIVE = "-r";
 
 	public static ProgramOptions parseOptions(String[] params) {
 		ProgramOptions po = new ProgramOptions();
@@ -24,8 +25,14 @@ public class ArgParser {
 				if (ABBREVATION.equals(params[i])) {
 					po.setAbrevate(true);
 				}
-				if (BASEDIR.equals(params[i]) && i + 1 != params.length) {
-					po.setBaseDir(params[i] + 1);
+				if (RECURSIVE.equals(params[i])) {
+					po.setRecursive(true);
+				}
+				if (OUTPUT.equals(params[i]) && i + 1 != params.length) {
+					po.setOutputPath(params[++i]);
+				}
+				if (i == params.length - 1) {
+					po.setInputFile(params[i]);
 				}
 			}
 		}

@@ -6,7 +6,7 @@ import java.util.List;
  * .
  * @author vszakonyi
  */
-public class Lexer {
+class Lexer {
 
 	StateMachine sm = StateMachine.NON_PHP;
 	private static final String operators = "'\"{}()[]=+-%!*.:<>;&|,";
@@ -20,7 +20,7 @@ public class Lexer {
 		return operators.indexOf(c.charValue()) != -1;
 	}
 
-	String compressLine(final String lineToCompress) {
+	StringBuilder compressLine(final String lineToCompress) {
 		StringBuilder line = new StringBuilder(lineToCompress);
 		StringBuilder ret = new StringBuilder();
 		for (int i = 0; i < line.length(); i++) {
@@ -107,7 +107,7 @@ public class Lexer {
 					break;
 			}
 		}
-		return ret.toString();
+		return ret;
 	}
 
 	private boolean isAlphaNum(char c) {

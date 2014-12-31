@@ -4,19 +4,29 @@ package kaffee.kompressor;
  * .
  * @author ahorvath
  */
-public class ProgramOptions {
+class ProgramOptions {
 
 	private boolean quiet;
 	private boolean verbose;
 	private boolean abrevate;
-	private String baseDir = "";
+	private boolean recursive;
+	private String inputFile;
+	private String outputPath;
 
-	public void setBaseDir(String baseDir) {
-		this.baseDir = baseDir;
+	public void setInputFile(String inputFile) {
+		this.inputFile = inputFile;
 	}
 
-	public String getBaseDir() {
-		return baseDir;
+	public String getInputFile() {
+		return inputFile;
+	}
+
+	public void setOutputPath(String outputPath) {
+		this.outputPath = outputPath;
+	}
+
+	public String getOutputPath() {
+		return outputPath;
 	}
 
 	public boolean isQuiet() {
@@ -41,5 +51,13 @@ public class ProgramOptions {
 
 	public void setAbrevate(boolean abrevate) {
 		this.abrevate = abrevate;
+	}
+
+	public void setRecursive(boolean recursive) {
+		this.recursive = recursive;
+	}
+
+	public boolean isRecursive() {
+		return recursive;
 	}
 }
