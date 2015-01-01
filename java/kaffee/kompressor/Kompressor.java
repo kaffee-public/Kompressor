@@ -1,6 +1,7 @@
 package kaffee.kompressor;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 public class Kompressor {
 
+	private static OutputWriter writer;
 	private static ProgramOptions options;
 	private static final int OPEN_COUNT = 10;
 
@@ -31,19 +33,20 @@ public class Kompressor {
 			System.err.println("No output path specified.");
 			System.exit(2);
 		}
-		Lexer l = new Lexer();
 		FileListComposer composer;
 		try {
 			composer = new FileListComposer(options.getInputFile(), options.isRecursive());
 		} catch (FileNotFoundException ex) {
-			System.err.println("Could not open specified input-path.");
+			System.err.println("Could not open specified input path.");
 			return;
 		}
-		processFiles(composer, l);
+		processFiles(composer);
 	}
 
-	private static void processFiles(FileListComposer composer, Lexer l) {
+	private static void processFiles(FileListComposer composer) {
 		List<BatchFileJob> jobsDone = new ArrayList<BatchFileJob>();
+		writer = new OutputWriter(OPEN_COUNT, options);
+		Lexer lexer = new Lexer();
 		for (BatchFileJob toCompress : composer.getJobList()) {
 			BufferedReader reader;
 			try {
@@ -56,7 +59,7 @@ public class Kompressor {
 			String line;
 			try {
 				while ((line = reader.readLine()) != null) {
-					StringBuilder s = l.compressLine(line);
+					StringBuilder s = lexer.compressLine(line);
 					output.append(s);
 					output.append('\n');
 				}
@@ -66,44 +69,9 @@ public class Kompressor {
 			toCompress.setResult(output);
 			jobsDone.add(toCompress);
 			if (jobsDone.size() == OPEN_COUNT) {
-				flushOutput(jobsDone);
+				writer.flushOutput(jobsDone);
 			}
 		}
-		flushOutput(jobsDone);
-	}
-
-	private static final FileWriter writers[] = new FileWriter[OPEN_COUNT];
-
-	private static void flushOutput(List<BatchFileJob> jobs) {
-		if (jobs.size() > OPEN_COUNT) {
-			throw new AssertionError("");
-			// Uhm, it looks bad.
-		}
-		int end = jobs.size();
-		for (int i = 0; i != end; ++i) {
-			try {
-				writers[i] = new FileWriter(options.getOutputPath() + jobs.get(i).getInnerName());
-			} catch (IOException ex) {
-				jobs.get(i).setJobResult(JobResult.COULD_NOT_WRITE);
-				writers[i] = null;
-			}
-		}
-		for (int i = 0; i != end; ++i) {
-			if (writers[i] != null) {
-				try {
-					writers[i].write(jobs.get(i).getResult().toString());
-					writers[i].close();
-					jobs.get(i).setJobResult(JobResult.COMPRESSED);
-				} catch (IOException ioe) {
-					jobs.get(i).setJobResult(JobResult.COULD_NOT_WRITE);
-				}
-			}
-		}
-		if (options.isVerbose()) {
-			Display.listResultsVerbose(jobs);
-		} else {
-			Display.listResults(jobs);
-		}
-		jobs.clear();
+		writer.flushOutput(jobsDone);
 	}
 }

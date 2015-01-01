@@ -1,7 +1,5 @@
 package kaffee.kompressor;
 
-import java.util.List;
-
 /**
  * .
  * @author vszakonyi
@@ -9,15 +7,10 @@ import java.util.List;
 class Lexer {
 
 	StateMachine sm = StateMachine.NON_PHP;
-	private static final String operators = "'\"{}()[]=+-%!*.:<>;&|,";
+	private static final String OPERATORS = "'\"{}()[]=+-%!*.:<>;&|,";
 
-	public void compress(List<String> lines) {
-		for (String line : lines) {
-		}
-	}
-
-	boolean isOperator(Character c) {
-		return operators.indexOf(c.charValue()) != -1;
+	private boolean isOperator(Character c) {
+		return OPERATORS.indexOf(c.charValue()) != -1;
 	}
 
 	StringBuilder compressLine(final String lineToCompress) {
@@ -111,7 +104,7 @@ class Lexer {
 	}
 
 	private boolean isAlphaNum(char c) {
-		return Character.isAlphabetic(c) || Character.isDigit(c) || c == '$';
+		return Character.isLetter(c) || Character.isDigit(c) || c == '$';
 	}
 
 	private boolean isWhiteSpace(char c) {

@@ -15,7 +15,7 @@ class FileListComposer {
 	private final List<BatchFileJob> jobList = new LinkedList<BatchFileJob>();
 	private final String inputPath;
 
-	public FileListComposer(String inputPath, boolean recursive) throws FileNotFoundException {
+	FileListComposer(String inputPath, boolean recursive) throws FileNotFoundException {
 		this.recursive = recursive;
 		this.inputPath = inputPath;
 		composeList();
@@ -38,14 +38,17 @@ class FileListComposer {
 	}
 
 	private void listFiles(File path) {
-		File[] directoryListing = path.listFiles();
+		String[] directoryListing = path.list();
 		if (directoryListing != null) {
-			for (File child : directoryListing) {
-				if (child.isFile() && child.getAbsolutePath().endsWith(".php")) {
-					int i = child.getAbsolutePath().lastIndexOf(inputPath) + inputPath.length();
-					String innerName = child.getAbsolutePath().substring(i);
-					BatchFileJob bfj = new BatchFileJob(child, innerName);
-					jobList.add(bfj);
+			for (String item : directoryListing) {
+				File child = new File(path.getAbsolutePath() + '\\' + item);
+				if (child.isFile()) {
+					if (child.getPath().endsWith(".php")) {
+						int i = child.getAbsolutePath().lastIndexOf('\\' + inputPath + '\\') + inputPath.length() + 1;
+						String innerName = child.getAbsolutePath().substring(i);
+						BatchFileJob bfj = new BatchFileJob(child, innerName);
+						jobList.add(bfj);
+					}
 				} else if (recursive) {
 					listFiles(child);
 				}

@@ -14,11 +14,8 @@ class Display {
 		System.out.println();
 	}
 
-	public void error(String fileName, String lineNumber) {
-		System.out.println("ERR " + fileName + " at line: ");
-		// Verbose
-		// Line count
-		System.out.println("File left in original state. Proceeding to next file.");
+	static void infoInputDirectory(String string) {
+		System.out.println("Input directory is " + string);
 	}
 
 	public static void listResults(List<BatchFileJob> jobs) {

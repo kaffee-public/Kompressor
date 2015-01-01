@@ -16,7 +16,7 @@ class BatchFileJob {
 	private StringBuilder result;
 	private JobResult jobResult;
 
-	public BatchFileJob(File file, String innerName) {
+	BatchFileJob(File file, String innerName) {
 		this.file = file;
 		if (file.length() > MAX_FILESIZE) {
 			throw new UnsupportedOperationException(file.getAbsolutePath() + " is too large to compress.");

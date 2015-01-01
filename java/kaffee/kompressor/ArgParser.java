@@ -10,7 +10,7 @@ class ArgParser {
 	private static final String VERBOSE = "-v";
 	private static final String ABBREVATION = "-abr";
 	private static final String OUTPUT = "-o";
-	private static final String RECURSIVE = "-r";
+	private static final String RECURSIVE = "-R";
 
 	public static ProgramOptions parseOptions(String[] params) {
 		ProgramOptions po = new ProgramOptions();
@@ -33,6 +33,7 @@ class ArgParser {
 				}
 				if (i == params.length - 1) {
 					po.setInputFile(params[i]);
+					Display.infoInputDirectory(params[i]);
 				}
 			}
 		}
