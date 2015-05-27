@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Kompressor</title>
+    </head>
+    <body>
+        <h1>Kompressor</h1>
+        <h5>Compress PHP code into smaller file size</h5>
+        <p>Kompressor is a Java program which compresses PHP files via removing unnecessary white-space from them.</p>
+        <h5>Benefits</h5>
+        <p>Smaller files mean faster deployment of PHP applications.</p>
+        <p>NOTE: It's not proven that compressed files run any faster than uncompressed. Except for the fact that smaller files are fetched faster from the background storage.</p>
+        <p>Line-breaks are not removed. The reason behind this is that debugging the scripts without line numbers is impossible. It would make program-parts unrecognizable. Removing other kinds of white-space does not have such a dramatic effect on readability.</p>
+        <h5>How to use?</h5>
+        <p>You should wire-in this program into your build script. It can receive a directory of input files via program arguments and it will compress the files it founds. The output folder can also be specified.</p>
+        <h5>What about compression rate?</h5>
+        <p>No result yet. They are coming!</p>
+        <h5>Legal</h5>
+        <p>Certain PHP-libs have their own license which prohibits you from modifying them. The output of this program is equal to the input in execution terms but results in a program-code which has all it's comments (including licenses) removed.</p>
+        <p>Thus the output is legal to deploy on a server but might be illegal to publish in any other form.</p>
+    </body>
+</html>

@@ -1,3 +1,6 @@
 /nbproject/*
 /dist/*
 /build/
+/meta/nbproject/private/
+/meta/build/
+/meta/dist/
